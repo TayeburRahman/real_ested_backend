@@ -10,6 +10,8 @@ import QueryBuilder from '../../../builder/QueryBuilder';
 import Member from '../member/member.model';
 import { IMember } from '../member/member.interface';
 import { NotificationService } from '../notifications/notifications.service';
+import TodoList from './task.model';
+import { GetAllGetQuery } from '../service/service.interface';
 
 
 const assignTeamMember = async (payload: { memberId: Types.ObjectId[]; taskId: Types.ObjectId }) => {
@@ -602,6 +604,113 @@ const getStatusCounts = async () => {
   return allStatuses;
 };
 
+const createToDoList = async (payload: { member: Types.ObjectId, description: string, task: Types.ObjectId, dueDate: Date }) => {
+  const toDoList = await TodoList.create(payload);
+  return toDoList;
+}
+
+const updateToDoListStatus = async (id: string) => {
+  try {
+    const todo = await TodoList.findById(id);
+    if (!todo) {
+      throw new Error("To-Do item not found");
+    }
+    // Toggle the status
+    todo.status = todo.status === "Pending" ? "Completed" : "Pending";
+
+    await todo.save();
+    return { success: true, message: "Status updated", updatedTodo: todo };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+};
+
+const getTaskLists = async (query: GetAllGetQuery) => {
+  const { searchTerm, page = 1, limit = 10 } = query;
+
+  console.log("Search:", searchTerm);
+
+  const matchStage: any = {};
+
+  if (searchTerm) {
+    matchStage.$or = [
+      { "order.address.streetName": { $regex: searchTerm, $options: "i" } },
+      { "order.address.streetAddress": { $regex: searchTerm, $options: "i" } },
+      { "order.address.city": { $regex: searchTerm, $options: "i" } },
+      { "order.address.zipCode": { $regex: searchTerm, $options: "i" } },
+    ];
+  }
+
+  const pageNumber = Math.max(1, Number(page));
+  const pageSize = Math.max(1, Number(limit));
+  const skip = (pageNumber - 1) * pageSize;
+
+  const result = await Tasks.aggregate([
+    {
+      $lookup: {
+        from: "orders",
+        localField: "orderId",
+        foreignField: "_id",
+        as: "order",
+      },
+    },
+    { $unwind: "$order" },
+    {
+      $lookup: {
+        from: "services",
+        localField: "serviceId",
+        foreignField: "_id",
+        as: "service",
+      },
+    },
+    { $unwind: { path: "$service", preserveNullAndEmptyArrays: true } },
+    {
+      $match: matchStage,
+    },
+    {
+      $project: {
+        serviceId: "$service.title",
+        orderId: "$order.address",
+        status: 1,
+        createdAt: 1,
+      },
+    },
+    { $sort: { createdAt: -1 } },
+    {
+      $facet: {
+        metadata: [{ $count: "total" }],
+        data: [{ $skip: skip }, { $limit: pageSize }],
+      },
+    },
+  ]);
+  const total = result[0]?.metadata[0]?.total || 0;
+  const data = result[0]?.data || [];
+
+  return {
+    total,
+    page: pageNumber,
+    limit: pageSize,
+    totalPages: Math.ceil(total / pageSize),
+    data,
+  };
+};
+
+
+const getTodoList = async (user: IReqUser) => {
+  const { userId, role } = user;
+
+  if (role === ENUM_USER_ROLE.MEMBER) {
+    return await TodoList.find({ member: { $in: [userId] } });
+  } else {
+    return await TodoList.find().sort({ createdAt: -1 });
+  }
+};
+
+
+
+
+
+
 
 
 export const TaskService = {
@@ -622,6 +731,10 @@ export const TaskService = {
   getNewTasks,
   viewTaskDetailsClient,
   taskStatusUpdateSubmitted,
-  getStatusCounts
+  getStatusCounts,
+  createToDoList,
+  updateToDoListStatus,
+  getTaskLists,
+  getTodoList
 };
 

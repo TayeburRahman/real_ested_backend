@@ -221,6 +221,57 @@ const getStatusCounts = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// =======================
+const createToDoList = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user as IReqUser;
+  const payload = req.body;
+  const result = await TaskService.createToDoList(payload);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Create To Do List Successfully",
+    data: result,
+  });
+});
+
+const updateToDoListStatus = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id as any;
+  const result = await TaskService.updateToDoListStatus(id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Update To Do List Successfully",
+    data: result,
+  });
+});
+
+const getTaskLists = catchAsync(async (req: Request, res: Response) => {
+  const query = req.query as any;
+  const result = await TaskService.getTaskLists(query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Get Task List Successfully",
+    data: result,
+  });
+});
+
+const getTodoList = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user as any;
+  const result = await TaskService.getTodoList(user);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Get TO Do List Successfully",
+    data: result,
+  });
+});
+
+
+
+
+
+
 
 
 
@@ -242,5 +293,9 @@ export const TaskController = {
   viewTaskDetailsClient,
   getNewTasks,
   taskStatusUpdateSubmitted,
-  getStatusCounts
+  getStatusCounts,
+  createToDoList,
+  updateToDoListStatus,
+  getTaskLists,
+  getTodoList
 };

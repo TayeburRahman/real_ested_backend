@@ -17,3 +17,14 @@ export interface ICommentData {
     // userType: 'Member' | 'Client';
   };
 }
+
+
+export interface ITodoList extends Document {
+  member: Types.ObjectId[];
+  description: string;
+  task: Types.ObjectId;
+  dueDate: Date;
+  status: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}

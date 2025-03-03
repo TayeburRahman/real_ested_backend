@@ -184,8 +184,8 @@ const commentSchema = new Schema<IComment>({
     },
 });
 
-const Orders = mongoose.model<IOrder>('Order', orderSchema);
 const Tasks = mongoose.model<ITasks>('Task', taskSchema);
+const Orders = mongoose.model<IOrder>('Order', orderSchema);
 const Comment = mongoose.model<IComment>('Comment', commentSchema);
 
 export { Orders, Tasks, Comment };

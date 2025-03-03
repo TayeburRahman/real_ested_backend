@@ -180,7 +180,7 @@ const addOrRemoveFavoriteList = async (user: IReqUser, conversationId: string, t
 
 const getFavoriteList = async (user: IReqUser) => {
 
-  const conversation = await Conversation.find({ favorite: { $in: user.authId } }).populate('favorite');
+  const conversation = await Conversation.find({ favorite: { $in: user.authId } }).populate('favorite messages participants');
 
   return conversation;
 }

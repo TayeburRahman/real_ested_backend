@@ -62,10 +62,27 @@ router.patch("/revisions",
 router.get("/view-details-client/:taskId",
     auth(ENUM_USER_ROLE.CLIENT, ENUM_USER_ROLE.AGENT, ENUM_USER_ROLE.MEMBER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
     TaskController.viewTaskDetailsClient);
-// Dashboard Home=========================
+
+// =Todo List============================
+router.post("/create-to-do-list",
+    auth(ENUM_USER_ROLE.AGENT, ENUM_USER_ROLE.MEMBER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+    TaskController.createToDoList);
+router.patch("/update-to-do-list/:id",
+    auth(ENUM_USER_ROLE.AGENT, ENUM_USER_ROLE.MEMBER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+    TaskController.updateToDoListStatus);
+router.patch("/update-to-do-list/:id",
+    auth(ENUM_USER_ROLE.AGENT, ENUM_USER_ROLE.MEMBER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+    TaskController.updateToDoListStatus);
+router.get("/get-task-list",
+    auth(ENUM_USER_ROLE.AGENT, ENUM_USER_ROLE.MEMBER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+    TaskController.getTaskLists);
+router.get("/get-todo-list",
+    auth(ENUM_USER_ROLE.AGENT, ENUM_USER_ROLE.MEMBER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+    TaskController.getTodoList);
+
+// =Dashboard Home=======================
 router.get("/get-count-of-status",
     auth(ENUM_USER_ROLE.AGENT, ENUM_USER_ROLE.MEMBER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
     TaskController.getStatusCounts);
-
 
 export const TaskRoutes = router;

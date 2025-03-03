@@ -73,5 +73,6 @@ export const messageController = {
   sendMessage,
   getMessages,
   conversationUser,
-  addOrRemoveFavoriteList
+  addOrRemoveFavoriteList,
+  getFavoriteList
 };

@@ -26,5 +26,12 @@ router.patch(
     auth(ENUM_USER_ROLE.CLIENT, ENUM_USER_ROLE.AGENT, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.MEMBER),
     messageController.addOrRemoveFavoriteList,
 );
+router.get(
+    '/favorite/get-all',
+    auth(ENUM_USER_ROLE.CLIENT, ENUM_USER_ROLE.AGENT, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.MEMBER),
+    messageController.getFavoriteList,
+);
+
+
 
 export const MessageRoutes = router;
