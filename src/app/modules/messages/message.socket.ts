@@ -46,6 +46,7 @@ const handleMessageData = async (
         }
     },
     );
+
     // Send Message for Email
     socket.on(ENUM_SOCKET_EVENT.MESSAGE_EMAIL_NEW, async (data: { receiverId: string; text: string, email: string, subject: string }) => {
         const { receiverId, text, email, subject } = data;
@@ -78,8 +79,6 @@ const handleMessageData = async (
             subject: subject,
             conversationId: conversation._id,
         });
-
-        console.log("conversation", newMessage, conversation);
 
         conversation.messages.push(newMessage._id);
         await Promise.all([conversation.save(), newMessage.save()]);

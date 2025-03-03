@@ -1,5 +1,7 @@
 import mongoose, { Schema, Model, Types } from 'mongoose';
 import { IPackage, IPricingGroup, IService, IServiceCategory } from './service.interface';
+import { IAdds } from '../member/member.interface';
+import { string } from 'zod';
 
 
 const serviceCategorySchema = new Schema<IServiceCategory>(
@@ -93,11 +95,26 @@ const pricingGroupSchema = new Schema<IPricingGroup>(
   }
 );
 
+const addsSchema = new Schema<IAdds>(
+  {
+    image: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    }
+  }
+);
+
+
 
 
 const Service: Model<IService> = mongoose.model<IService>('Service', serviceSchema);
 const ServiceCategory: Model<IServiceCategory> = mongoose.model<IServiceCategory>('ServiceCategory', serviceCategorySchema);
 const Package: Model<IPackage> = mongoose.model<IPackage>('Package', packageSchema);
 const PricingGroup: Model<IPricingGroup> = mongoose.model<IPricingGroup>('PricingGroup', pricingGroupSchema);
+const Adds: Model<IAdds> = mongoose.model<IAdds>('Adds', addsSchema);
 
-export { Service, ServiceCategory, Package, PricingGroup };
+export { Service, ServiceCategory, Package, PricingGroup, Adds };

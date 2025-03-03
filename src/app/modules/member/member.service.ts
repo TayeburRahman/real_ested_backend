@@ -7,6 +7,8 @@ import { Types } from 'mongoose';
 import { GetAllGetQuery } from '../service/service.interface';
 import QueryBuilder from '../../../builder/QueryBuilder';
 import { IReqUser } from '../auth/auth.interface';
+import { IAdds } from './member.interface';
+import { Adds } from '../service/service.model';
 
 const updateMyProfile = async (req: RequestData) => {
   const { files, body: data } = req;
@@ -136,6 +138,62 @@ const getAllMembers = async (user: IReqUser, query: GetAllGetQuery) => {
   return { meta, result };
 };
 
+// ============================================
+const createMediaUpload = async (files: any, payload: IAdds) => {
+  if (!files?.image) {
+    throw new ApiError(400, 'File is missing');
+  }
+
+  if (files?.image) {
+    payload.image = `/images/image/${files.image[0].filename}`;
+  }
+
+  return await Adds.create(payload);
+};
+
+const updateAdds = async (req: any) => {
+  const { files } = req as any;
+  const id = req.params.id;
+  const { ...AddsData } = req.body;
+
+  console.log("AddsData", AddsData)
+
+  if (files && files.image) {
+    AddsData.image = `/images/image/${files.image[0].filename}`;
+  }
+
+  const isExist = await Adds.findOne({ _id: id });
+
+  if (!isExist) {
+    throw new ApiError(404, 'Adds not found !');
+  }
+  // console.log("image", AddsData)
+  const result = await Adds.findOneAndUpdate(
+    { _id: id },
+    { ...AddsData },
+    {
+      new: true,
+    },
+  );
+  console.log("result", result)
+  return result;
+};
+
+const deleteAdds = async (id: string) => {
+  const isExist = await Adds.findOne({ _id: id });
+  if (!isExist) {
+    throw new ApiError(404, 'Adds not found !');
+  }
+  return await Adds.findByIdAndDelete(id);
+};
+
+const findOneImage = async () => {
+  const isExist = await Adds.findOne();
+  if (!isExist) {
+    throw new ApiError(404, 'Adds not found !');
+  }
+  return isExist;
+};
 
 
 export const MemberService = {
@@ -143,6 +201,10 @@ export const MemberService = {
   updateProfile,
   getAllMembersWithOutPagination,
   getAllMembers,
-  updateMyProfile
+  updateMyProfile,
+  createMediaUpload,
+  findOneImage,
+  deleteAdds,
+  updateAdds
 };
 

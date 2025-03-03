@@ -5,6 +5,7 @@ import { Request, RequestHandler, Response } from 'express';
 import { MemberService } from "./member.service";
 import { RequestData } from "../../../interfaces/common";
 import { GetAllGetQuery } from "../service/service.interface";
+import { IAdds } from "./member.interface";
 
 const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
   const result = await MemberService.updateMyProfile(req as any);
@@ -60,6 +61,46 @@ const getAllMembers = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+// =================================
+const createMediaUpload = catchAsync(async (req: Request, res: Response) => {
+  const result = await MemberService.createMediaUpload(req.files, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Adds create successfully',
+    data: result,
+  });
+});
+
+const updateAdds = catchAsync(async (req: Request, res: Response) => {
+  const result = await MemberService.updateAdds(req);
+  sendResponse<IAdds>(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Adds update successfully',
+    data: result,
+  });
+});
+
+const deleteAdds = catchAsync(async (req: Request, res: Response) => {
+  const result = await MemberService.deleteAdds(req.params.id);
+  sendResponse<IAdds>(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Adds delete successfully',
+    data: result,
+  });
+});
+
+const getAdds = catchAsync(async (req: Request, res: Response) => {
+  const result = await MemberService.findOneImage();
+  sendResponse<IAdds>(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Get Adds Successfully',
+    data: result,
+  });
+});
 
 
 
@@ -68,5 +109,9 @@ export const MemberController = {
   updateProfile,
   getAllMembersWithOutPagination,
   getAllMembers,
-  updateMyProfile
+  updateMyProfile,
+  createMediaUpload,
+  updateAdds,
+  deleteAdds,
+  getAdds
 };

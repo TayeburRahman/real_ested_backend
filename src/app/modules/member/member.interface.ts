@@ -26,3 +26,8 @@ export interface IMember extends Document {
   is_admin?: boolean | null;
 }
 
+export type IAdds = {
+  image: string;
+  url: string;
+};
+
