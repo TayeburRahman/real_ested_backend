@@ -151,32 +151,37 @@ const conversationUser = async () => {
 };
 
 const addOrRemoveFavoriteList = async (user: IReqUser, conversationId: string, types: string) => {
-
   if (!types || !conversationId) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid request payload');
   }
 
-  if (types === "add") {
-    const conversation = await Conversation.findByIdAndUpdate(
-      conversationId,
-      { $addToSet: { favorite: user.authId } },
-      { new: true },
-    ).populate('favorite');
-
-    return conversation;
-  } else if (types === "remove") {
-    const conversation = await Conversation.findByIdAndUpdate(
-      conversationId,
-      { $addToSet: { favorite: user.authId } },
-      { new: true },
-    ).populate('favorite');
-
-    return conversation;
+  // Ensure conversation exists before updating
+  const conversationExists = await Conversation.findById(conversationId);
+  if (!conversationExists) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Conversation not found');
   }
-  else {
+
+  let updateQuery;
+
+  if (types === "add") {
+    updateQuery = { $addToSet: { favorite: user.authId } };
+  } else if (types === "remove") {
+    updateQuery = { $pull: { favorite: user.authId } };
+  } else {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid request payload');
   }
-}
+
+  const conversation = await Conversation.findByIdAndUpdate(
+    conversationId,
+    updateQuery,
+    { new: true },
+  ).populate('favorite');
+
+  console.log(`Updated Conversation:`, conversation);
+
+  return conversation;
+};
+
 
 const getFavoriteList = async (user: IReqUser) => {
 
