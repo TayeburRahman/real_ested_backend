@@ -210,15 +210,17 @@ const handleMessageData = async (
     });
     // Send Revisions for Orders
     socket.on(ENUM_SOCKET_EVENT.REVISIONS_MESSAGE, async (
-        data: { taskId: string; text: string; fileId: string },
+        data: { taskId: string; text: string; fileId: string, types: string },
         callback: (response: any) => void
     ) => {
-        const { taskId, fileId, text } = data;
+        const { taskId, fileId, text, types } = data;
         try {
-            if (!text || !taskId || !fileId) {
+            if (!text || !taskId) {
                 socket.emit("error", { message: "Task ID, File ID, or Text is missing!" });
                 return;
             }
+
+            console.log("task==========Retions", data)
             if (!senderId) {
                 socket.emit("error", { message: "Sender ID is missing." });
                 return;
@@ -230,9 +232,12 @@ const handleMessageData = async (
             }
 
             let image: any;
-            if (task.finishFile?.length > 0) {
-                image = task.finishFile.find((file: any) => file._id?.toString() === fileId)?.url;
+            if (fileId) {
+                if (task.finishFile?.length > 0) {
+                    image = task.finishFile.find((file: any) => file._id?.toString() === fileId)?.url;
+                }
             }
+
 
             const orderId = task.orderId;
             let conversation = await Conversation.findOne({ orderId });
@@ -252,7 +257,8 @@ const handleMessageData = async (
                 isRevision: true,
                 conversationId: conversation._id,
                 fileId: fileId,
-                taskId: taskId
+                taskId: taskId,
+                types: types
             });
 
             conversation.messages.push(newMessage._id);
@@ -261,6 +267,7 @@ const handleMessageData = async (
             const comment = await Comment.create({
                 taskId,
                 fileId,
+                types,
                 isRevision: true,
                 comment: {
                     text,

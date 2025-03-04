@@ -163,6 +163,11 @@ const commentSchema = new Schema<IComment>({
     fileId: {
         type: Schema.Types.ObjectId,
     },
+    types: {
+        type: String,
+        enum: ['all-revisions'],
+        default: null,
+    },
     replayId: {
         type: Schema.Types.ObjectId,
         ref: "Comment",

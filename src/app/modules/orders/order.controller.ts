@@ -176,6 +176,20 @@ const getOrderStatusCount = catchAsync(async (req: Request, res: Response) => {
     });
 })
 
+const getClientGrows = catchAsync(async (req: Request, res: Response) => {
+
+    const result = await OrdersService.getClientGrows();
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Get successfully",
+        data: result,
+    });
+})
+
+
+
 
 
 export const OrdersController = {
@@ -191,5 +205,6 @@ export const OrdersController = {
     getRecentOrder,
     needSubmitToday,
     getOrderGrows,
-    getOrderStatusCount
+    getOrderStatusCount,
+    getClientGrows
 }

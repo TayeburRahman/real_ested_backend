@@ -51,6 +51,13 @@ router.get("/get-order-grows",
         ENUM_USER_ROLE.SUPER_ADMIN
     ), OrdersController.getOrderGrows);
 
+router.get("/get-client-grows",
+    auth(
+        ENUM_USER_ROLE.MEMBER,
+        ENUM_USER_ROLE.ADMIN,
+        ENUM_USER_ROLE.SUPER_ADMIN
+    ), OrdersController.getClientGrows);
+
 router.get("/get-order-status-count", OrdersController.getOrderStatusCount);
 
 

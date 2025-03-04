@@ -85,6 +85,7 @@ export interface IComment {
     taskId: Types.ObjectId;
     replayId: Types.ObjectId | null;
     isRevision: boolean;
+    types: string | null;
     comment: {
         text: string;
         userId: Types.ObjectId;

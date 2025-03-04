@@ -37,8 +37,11 @@ const messageSchema = new mongoose.Schema<IMessage>(
       type: Types.ObjectId,
       // ref: "Task"
     },
-
-
+    types: {
+      type: String,
+      enum: ['all-revisions'],
+      default: null,
+    }
   },
   {
     timestamps: true,

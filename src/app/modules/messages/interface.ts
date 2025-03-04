@@ -20,6 +20,7 @@ export type IMessage = {
   isRevision: boolean;
   fileId: Types.ObjectId | null;
   taskId: Types.ObjectId | null;
+  types: string | null;
 };
 
 export type Participant = {

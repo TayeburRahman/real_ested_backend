@@ -7,6 +7,7 @@ import { Package, PricingGroup } from "../service/service.model";
 import { IReqUser } from "../auth/auth.interface";
 import { ENUM_TASK_STATUS, ENUM_USER_ROLE } from "../../../enums/user";
 import { NotificationService } from "../notifications/notifications.service";
+import Client from "../client/client.model";
 
 
 const createNewOrder = async (user: IReqUser, payload: IOrder, files: Express.Multer.File[]) => {
@@ -692,6 +693,84 @@ const getOrderGrows = async (year?: number) => {
     }
 };
 
+const getClientGrows = async (year?: number) => {
+    try {
+        const currentYear = new Date().getFullYear();
+        const selectedYear = year || currentYear;
+
+        const { startDate, endDate } = getYearRange(selectedYear);
+
+        const monthlyDriverGrowth = await Client.aggregate([
+            {
+                $match: {
+                    createdAt: {
+                        $gte: startDate,
+                        $lt: endDate,
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        month: { $month: '$createdAt' },
+                        year: { $year: '$createdAt' },
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    month: '$_id.month',
+                    year: '$_id.year',
+                    count: 1,
+                },
+            },
+            {
+                $sort: { month: 1 },
+            },
+        ]);
+
+        const months = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec',
+        ];
+
+        const result = Array.from({ length: 12 }, (_, i) => {
+            const monthData = monthlyDriverGrowth.find(
+                data => data.month === i + 1,
+            ) || {
+                month: i + 1,
+                count: 0,
+                year: selectedYear,
+            };
+            return {
+                ...monthData,
+                month: months[i],
+            };
+        });
+
+        return {
+            year: selectedYear,
+            data: result,
+        };
+    } catch (error: any) {
+        console.error('Error in getDriverGrowth function: ', error);
+        throw new ApiError(404, error.message);;
+    }
+};
+
+
 const getOrderStatusCount = async () => {
     const formatter = new Intl.DateTimeFormat("en-US", {
         timeZone: "Europe/Amsterdam",
@@ -741,5 +820,6 @@ export const OrdersService = {
     getRecentOrders,
     needSubmitToday,
     getOrderGrows,
-    getOrderStatusCount
+    getOrderStatusCount,
+    getClientGrows
 }
