@@ -308,6 +308,8 @@ const getAllOrders = async (query: GetAllOrderQuery) => {
 
     if (searchTerm) {
         matchStage["client.name"] = { $regex: searchTerm, $options: "i" };
+
+        // query.page= 1
     }
 
     const orders = await Orders.aggregate([
