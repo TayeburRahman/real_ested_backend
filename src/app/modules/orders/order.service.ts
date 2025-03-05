@@ -343,7 +343,7 @@ const getAllOrders = async (query: GetAllOrderQuery) => {
                 paymentStatus: 1
             }
         },
-        { $sort: { createdAt: -1 } },
+        // { $sort: { createdAt: -1 } },
         { $skip: (Number(page) - 1) * Number(limit) },
         { $limit: Number(limit) }
     ]);
