@@ -374,7 +374,7 @@ const getAllOrders = async (query: GetAllOrderQuery) => {
             // @ts-ignore
             totalPages: Math.ceil((totalCount[0]?.total || 0) / limit),
         },
-        data: orders
+        data: orders.reverse()
     };
 };
 
