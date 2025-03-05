@@ -362,7 +362,7 @@ const getAllOrders = async (query: GetAllOrderQuery) => {
         { $count: "total" }
     ]);
 
-    console.log("Starting")
+    console.log("Starting", orders)
 
     return {
         meta: {
