@@ -268,7 +268,7 @@ const getAllTasks = async (query: any, user: IReqUser) => {
     { $sort: { _id: 1 } }
   ]);
 
-  return tasks;
+  return tasks.reverse();
 };
 
 const rejectTask = async (taskId: string, user: IReqUser, payload: any) => {

@@ -334,7 +334,7 @@ const getAllOrders = async (query: GetAllOrderQuery) => {
                 totalAmount: 1,
                 appointment: {
                     $concat: [
-                        { $dateToString: { format: "%m/%d/%Y", date: "$schedule.date" } }, // Fixed format
+                        { $dateToString: { format: "%m/%d/%Y", date: "$schedule.date" } },
                         " at ",
                         "$schedule.start_time"
                     ]
@@ -343,10 +343,9 @@ const getAllOrders = async (query: GetAllOrderQuery) => {
                 paymentStatus: 1
             }
         },
-        // @ts-ignore
-        { $skip: (page - 1) * limit },
-        // @ts-ignore
-        { $limit: limit }
+        { $sort: { createdAt: -1 } },
+        { $skip: (Number(page) - 1) * Number(limit) },
+        { $limit: Number(limit) }
     ]);
 
     const totalCount = await Orders.aggregate([
